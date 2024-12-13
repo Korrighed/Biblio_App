@@ -1,0 +1,214 @@
+{
+  "livres": [
+    {
+      "titre": "Le Petit Prince",
+      "auteur": "Antoine de Saint-Exupéry",
+      "ISBN": "978-1-2345-0001-7",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Les Misérables",
+      "auteur": "Victor Hugo",
+      "ISBN": "978-1-2345-0002-4",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "L'Étranger",
+      "auteur": "Albert Camus",
+      "ISBN": "978-1-2345-0003-1",
+      "etat": "mauvais",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Madame Bovary",
+      "auteur": "Gustave Flaubert",
+      "ISBN": "978-1-2345-0004-8",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Candide",
+      "auteur": "Voltaire",
+      "ISBN": "978-1-2345-0005-5",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "La Peste",
+      "auteur": "Albert Camus",
+      "ISBN": "978-1-2345-0006-2",
+      "etat": "mauvais",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Le Rouge et le Noir",
+      "auteur": "Stendhal",
+      "ISBN": "978-1-2345-0007-9",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Germinal",
+      "auteur": "Émile Zola",
+      "ISBN": "978-1-2345-0008-6",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "Le Père Goriot",
+      "auteur": "Honoré de Balzac",
+      "ISBN": "978-1-2345-0009-3",
+      "etat": "mauvais",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "Bel-Ami",
+      "auteur": "Guy de Maupassant",
+      "ISBN": "978-1-2345-0010-9",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Notre-Dame de Paris",
+      "auteur": "Victor Hugo",
+      "ISBN": "978-1-2345-0011-6",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "Les Fleurs du mal",
+      "auteur": "Charles Baudelaire",
+      "ISBN": "978-1-2345-0012-3",
+      "etat": "mauvais",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Huis Clos",
+      "auteur": "Jean-Paul Sartre",
+      "ISBN": "978-1-2345-0013-0",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "La Condition humaine",
+      "auteur": "André Malraux",
+      "ISBN": "978-1-2345-0014-7",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "Les Lettres de mon moulin",
+      "auteur": "Alphonse Daudet",
+      "ISBN": "978-1-2345-0015-4",
+      "etat": "mauvais",
+      "emprunt": "non"
+    },
+    {
+      "titre": "La Princesse de Clèves",
+      "auteur": "Madame de La Fayette",
+      "ISBN": "978-1-2345-0016-1",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Voyage au bout de la nuit",
+      "auteur": "Louis-Ferdinand Céline",
+      "ISBN": "978-1-2345-0017-8",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "La Gloire de mon père",
+      "auteur": "Marcel Pagnol",
+      "ISBN": "978-1-2345-0018-5",
+      "etat": "mauvais",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Le Grand Meaulnes",
+      "auteur": "Alain-Fournier",
+      "ISBN": "978-1-2345-0019-2",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Thérèse Raquin",
+      "auteur": "Émile Zola",
+      "ISBN": "978-1-2345-0020-8",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "La Douleur",
+      "auteur": "Marguerite Duras",
+      "ISBN": "978-1-2345-0021-5",
+      "etat": "mauvais",
+      "emprunt": "non"
+    },
+    {
+      "titre": "La Modification",
+      "auteur": "Michel Butor",
+      "ISBN": "978-1-2345-0022-2",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "Les Liaisons dangereuses",
+      "auteur": "Choderlos de Laclos",
+      "ISBN": "978-1-2345-0023-9",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "La Chartreuse de Parme",
+      "auteur": "Stendhal",
+      "ISBN": "978-1-2345-0024-6",
+      "etat": "mauvais",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "L'Assommoir",
+      "auteur": "Émile Zola",
+      "ISBN": "978-1-2345-0025-3",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "À la recherche du temps perdu",
+      "auteur": "Marcel Proust",
+      "ISBN": "978-1-2345-0026-0",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "Le Horla",
+      "auteur": "Guy de Maupassant",
+      "ISBN": "978-1-2345-0027-7",
+      "etat": "mauvais",
+      "emprunt": "non"
+    },
+    {
+      "titre": "La Symphonie pastorale",
+      "auteur": "André Gide",
+      "ISBN": "978-1-2345-0028-4",
+      "etat": "neuf",
+      "emprunt": "non"
+    },
+    {
+      "titre": "La Femme rompue",
+      "auteur": "Simone de Beauvoir",
+      "ISBN": "978-1-2345-0029-1",
+      "etat": "usé",
+      "emprunt": "oui"
+    },
+    {
+      "titre": "Le Colonel Chabert",
+      "auteur": "Honoré de Balzac",
+      "ISBN": "978-1-2345-0030-7",
+      "etat": "mauvais",
+      "emprunt": "non"
+    }
+  ]
+}
