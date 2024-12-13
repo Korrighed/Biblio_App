@@ -2,7 +2,6 @@
 This is a basic environnement set for a ve app with bootsrap : 
 
 # Install depencies : 
-
 ```sh
 npm install
 ```
@@ -18,8 +17,14 @@ VITE_BASE=/
 ```.env.production
 VITE_BASE=/Name_Of_repo/
 ```
+# Start new repo 
+Once pull adapte your the origin url to your repo
+```sh
+git remote set-url origin git://new.url.here
+```
+
 # gh-pages 
-To deploy on git hub pages a sub branch of main as gh-pages. 
+To deploy on git hub pages a sub branch of main as gh-pages.        
 This sub branch will only serv the dist file. 
 
 + make assets
@@ -34,13 +39,10 @@ git add dist -f
 ```sh
 git commit -m"Ajout Dist pour prod"
 ```
-
 To push new version 
-
 ```sh
 git push origin --delete gh-pages
 ```
-
 ```sh
 git subtree push --prefix dist origin gh-pages
 ```
