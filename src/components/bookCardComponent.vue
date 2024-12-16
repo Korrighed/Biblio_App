@@ -38,24 +38,28 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class ="row">
-        <div class=" col-6  mt-1 align-items-start">
-            <searchBarComponent @search="handleSearch"/>
+    <div class="container">
+        <div class ="row">
+            <div class=" col-12 mt-1">
+                <searchBarComponent @search="handleSearch"/>
+            </div>
         </div>
     </div>
-    <div class ="row ms-1">
-        <div class="card m-1 p-0 d-grid" style="max-width: 24vw;" v-for="(livre, index) in filteredItems" :key="index">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img :src="livre.image || 'default-cover.jpg'" class="img-fluid ms-1 mt-5" alt="couverture">
-                </div>
-                <div class="col-md-6">
-                    <div class="card-body g-0">
-                        <h5 class="card-title">{{ livre.titre }}</h5>
-                        <p class="card-text">Auteur : {{ livre.auteur || "Auteur inconnu" }}</p>
-                        <p class="card-text">ISBN : {{ livre.ISBN }}</p>
-                        <p class="card-text">État : {{ livre.etat }}</p>
-                        <DispoComponent :emprunt="livre.emprunt" />
+    <div class="container">
+        <div class ="row m-2">
+            <div class="card justify-content-between p-0 col-lg-2 col-sm-5" v-for="(livre, index) in filteredItems" :key="index">
+                <div class="row g-0">
+                    <div class="col-4">
+                        <img :src="livre.image || 'default-cover.jpg'" class="img-fluid rounded-start ms-1 mt-lg-4" alt="couverture">
+                    </div>
+                    <div class="col-8 p-0">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ livre.titre }}</h5>
+                            <p class="card-text">Auteur : {{ livre.auteur || "Auteur inconnu" }}</p>
+                            <p class="card-text">ISBN : {{ livre.ISBN }}</p>
+                            <p class="card-text">État : {{ livre.etat }}</p>
+                            <DispoComponent :emprunt="livre.emprunt" />
+                        </div>
                     </div>
                 </div>
             </div>

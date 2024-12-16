@@ -5,7 +5,7 @@
     </label>
     <label class ="flex flex-nowrap">
         <input type="radio" value="emprunte" :checked="isEmprunte" disabled />
-        <span class="whitespace-nowrap">Emprunté</span>
+        <span class="whitespace-nowrap">Empruntée</span>
     </label>
 </template>
 
@@ -20,7 +20,6 @@ const { emprunt } = defineProps({
   },
 });
 
-console.log("Prop emprunt reçue :", emprunt);
 const isDisponible = computed(() => emprunt !== "oui");
 const isEmprunte = computed(() => emprunt === "oui");
 
