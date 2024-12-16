@@ -1,43 +1,62 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
+import searchBarComponent from "./searchBarComponent.vue";
+import DispoComponent from "./dispoComponent.vue";
 
-// Déclaration d'une ref pour stocker les données des livres
+
 const bookData = ref([]);
+const searchFilter = ref ('');//String from the searchBarComponent
 
 // Fonction pour récupérer les livres depuis le fichier JSON
 async function fetchBooks() {
-    const booksLinks = "./livres.json"; // Chemin vers le fichier JSON dans /public
+    const booksLinks = "./livres.json"; 
     try {
-        const response = await axios.get(booksLinks); // Récupère le contenu du JSON
-        bookData.value = response.data.livres; // Stocke uniquement le tableau "livres" du JSON
-        console.log("Livres chargés :", bookData.value);
+        const response = await axios.get(booksLinks); 
+        bookData.value = response.data.livres; 
     } catch (error) {
         console.error("Erreur lors de la récupération des livres :", error);
     }
 }
+const filteredItems = computed (() => {
+    if (searchFilter.value != '') {
+        return bookData.value.filter(livre => 
+        livre.titre.toLowerCase().includes(searchFilter.value.toLowerCase()) || 
+        livre.auteur.toLowerCase().includes(searchFilter.value.toLowerCase())
+        );
+    }
+    return bookData.value;
+})
+const handleSearch = (search) => {
+    searchFilter.value = search;
+}
 
-// Appel de la fonction au montage du composant
 onMounted(() => {
     fetchBooks();
 });
+
 </script>
 
 <template>
-    <!-- Liste des livres affichée sous forme de cartes -->
-    <div class="card mb-3" style="max-width: 20vw;" v-for="(livre, index) in bookData" :key="index">
-        <div class="row g-0">
-            <!-- Section de l'image -->
-            <div class="col-md-4">
-                <img :src="livre.image || 'default-cover.jpg'" class="img-fluid rounded-start" alt="couverture">
-            </div>
-            <!-- Section des informations -->
-            <div class="col-md-6">
-                <div class="card-body">
-                    <h5 class="card-title">{{ livre.titre }}</h5>
-                    <p class="card-text">Auteur : {{ livre.auteur || "Auteur inconnu" }}</p>
-                    <p class="card-text">ISBN : {{ livre.ISBN }}</p>
-                    <p class="card-text">État : {{ livre.etat }}</p>
+    <div class ="row">
+        <div class=" col-6  mt-1 align-items-start">
+            <searchBarComponent @search="handleSearch"/>
+        </div>
+    </div>
+    <div class ="row ms-1">
+        <div class="card m-1 p-0 d-grid" style="max-width: 24vw;" v-for="(livre, index) in filteredItems" :key="index">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img :src="livre.image || 'default-cover.jpg'" class="img-fluid ms-1 mt-5" alt="couverture">
+                </div>
+                <div class="col-md-6">
+                    <div class="card-body g-0">
+                        <h5 class="card-title">{{ livre.titre }}</h5>
+                        <p class="card-text">Auteur : {{ livre.auteur || "Auteur inconnu" }}</p>
+                        <p class="card-text">ISBN : {{ livre.ISBN }}</p>
+                        <p class="card-text">État : {{ livre.etat }}</p>
+                        <DispoComponent :emprunt="livre.emprunt" />
+                    </div>
                 </div>
             </div>
         </div>
