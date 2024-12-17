@@ -4,7 +4,8 @@
         <div class="col-md-4 align-self-start">
             <form action="" class="search-form">
                 <div class="form-group has-feedback">
-                    <input type="text" @input="search" class="form-control" name="search" id="search" placeholder="Rechercher un livre ou auteur">
+                    <input type="text" @input="search" class="form-control" 
+                    name="search" id="search" placeholder="Rechercher un livre ou auteur">
             	</div>
             </form>
         </div>
