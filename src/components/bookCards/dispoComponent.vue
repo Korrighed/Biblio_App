@@ -21,11 +21,11 @@ import { computed } from "vue";
 
 const { emprunt } = defineProps({
   emprunt: {
-    type: String,
+    type: Boolean,
     required: true,
   },
 });
 
-const isDisponible = computed(() => emprunt !== "oui");
-const isEmprunte = computed(() => emprunt === "oui");
+const isDisponible = computed(() => emprunt !== true);
+const isEmprunte = computed(() => emprunt === true);
 </script>

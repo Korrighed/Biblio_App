@@ -1,17 +1,17 @@
 <template>
   <div class="row">
-    <headerComponent @showConnexion="showConnexion = true" />
+  <headerComponent @showConnexion="showConnexion = true" />
   </div>
-  <connexionComponent v-if="showConnexion" @close="showConnexion = false" />
+  <logginModalComponent v-if="showConnexion" @close="showConnexion = false" />
   <div class="row">
-    <bookCardComponent />
+  <bookCardComponent />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import bookCardComponent from './components/bookCards/bookCardComponent.vue';
-import connexionComponent from './components/account/logginModalComponent.vue';
+import logginModalComponent from './components/account/logginModalComponent.vue';
 import headerComponent from './components/header/headerComponent.vue';
 const showConnexion = ref(false);
 </script>

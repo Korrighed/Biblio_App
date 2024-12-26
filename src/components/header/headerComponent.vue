@@ -5,7 +5,7 @@
                 Bienvenue sur l'intranet des amoureux du livre 
             </div>
             <div class="col-3">
-                <button @click="showModal = true" type="button" class="btn btn-secondary mt-3" value="connexion">
+                <button @click="$emit('showConnexion')" type="button" class="btn btn-secondary mt-3">
                     Connexion
                 </button>
             </div>
@@ -18,6 +18,8 @@
 import { ref } from 'vue';
 import logginModalComponent from '../account/logginModalComponent.vue'; 
 const showModal = ref(false);
+defineEmits(['showConnexion']);
+
 </script>
 
 <style>
