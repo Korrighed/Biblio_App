@@ -1,23 +1,28 @@
 <template>
-    <div class="containermin-vh-25 py-3 py-md-5 header">
+    <div class="containermin-vh-25 py-0 header">
         <div class="row">
-            <div class="col-9 align-content-center m-auto fs-5 text-center mt-3">
-                Bienvenue sur l'intranet des amoureux du livre 
+            <div class="col-6 align-content-center m-auto fs-5 text-center mt-3">
+                Bienvenu sur l'intranet des amoureux du livre
             </div>
             <div class="col-3">
-                <button @click="$emit('showConnexion')" type="button" class="btn btn-secondary mt-3">
-                    Connexion
+                <button 
+                @click="currentUser ? $emit('navigateToAdmin') : $emit('showConnexion')"
+                type="button"
+                class="btn btn-secondary my-3"
+                >
+                {{ currentUser ? currentUser.login : 'Connexion' }}
                 </button>
             </div>
         </div>
     </div>
-    <logginModalComponent v-if="showModal" @close="showModal = false" />
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import logginModalComponent from '../account/logginModalComponent.vue'; 
-const showModal = ref(false);
+import { computed } from "vue"; 
+import { useUserStore } from '../../stores/userStore';
+const userStore = useUserStore();
+const currentUser  = computed(() => userStore.currentUser);
+
 defineEmits(['showConnexion']);
 
 </script>

@@ -12,7 +12,7 @@ export const initDB = () => {
         };
 
         request.onsuccess = (event) => {
-            console.log("Base de données IndexedDB ouverte avec succès !");
+            // console.log("Base de données IndexedDB ouverte avec succès !");
             resolve(event.target.result);
         };
 
@@ -24,7 +24,7 @@ export const initDB = () => {
 };
 
 export const populateUsers = async (db) => {
-    console.log("Chargement des utilisateurs depuis users.json...");
+    // console.log("Chargement des utilisateurs depuis users.json...");
 
     try {
         // Étape 1 : Charger les utilisateurs depuis users.json
@@ -43,7 +43,7 @@ export const populateUsers = async (db) => {
             const existingIds = new Set(existingUsers.map((user) => user.id));
             // Étape 3 : Ajouter les utilisateurs manquants
             const newUsers = usersFromJSON.filter((user) => !existingIds.has(user.id));
-            console.log("Nouveaux utilisateurs à ajouter :", newUsers);
+            // console.log("Nouveaux utilisateurs à ajouter :", newUsers);
 
             if (newUsers.length > 0) {
                 const writeTransaction = db.transaction("users", "readwrite");
@@ -52,7 +52,7 @@ export const populateUsers = async (db) => {
                 for (const user of newUsers) {
                     const addRequest = writeStore.add(user);
                     addRequest.onsuccess = () => {
-                        console.log("Utilisateur ajouté :", user);
+                        // console.log("Utilisateur ajouté :", user);
                     };
 
                     addRequest.onerror = (event) => {
@@ -61,14 +61,14 @@ export const populateUsers = async (db) => {
                 }
 
                 writeTransaction.oncomplete = () => {
-                    console.log("Tous les nouveaux utilisateurs ont été ajoutés avec succès !");
+                    // console.log("Tous les nouveaux utilisateurs ont été ajoutés avec succès !");
                 };
 
                 writeTransaction.onerror = (event) => {
                     console.error("Erreur dans la transaction d'ajout :", event.target.error);
                 };
             } else {
-                console.log("Aucun utilisateur à ajouter. Tous les IDs sont déjà présents.");
+                // console.log("Aucun utilisateur à ajouter. Tous les IDs sont déjà présents.");
             }
         };
 

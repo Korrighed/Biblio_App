@@ -3,7 +3,6 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="modal-content col-lg-4 col-sm-5 mx-auto">
-
                     <button @click="$emit('close')" class="btn-close"></button>
                     <h3 class="text-center">{{ isLoginMode ? "Connexion" : "Inscription" }}</h3>
 
@@ -47,7 +46,7 @@ const volunteerId = ref(""); // ID associatif
 const username = ref(""); // Nom d'utilisateur
 const password = ref(""); // Mot de passe
 const userStore = useUserStore(); // Pinia store
-defineEmits(['close']);
+const emit = defineEmits(['close']);
 
 
 // Basculer entre Connexion et Inscription
@@ -83,7 +82,6 @@ const registerUser = async (id, username, password) => {
         user.login = username;
         user.password = btoa(password); // Encodage du mot de passe
         store.put(user);
-
         alert("Inscription réussie !");
     };
 
@@ -111,7 +109,8 @@ const loginUser = async (username, password) => {
 
         if (atob(user.password) === password) {
             alert("Connexion réussie !");
-            userStore.setUser(user); // Mettre à jour l'état global avec Pinia
+            userStore.setUser(user); 
+            emit('close');
         } else {
             alert("Mot de passe incorrect !");
         }

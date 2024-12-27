@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import searchBarComponent from "./searchBarComponent.vue";
 import DispoComponent from "./dispoComponent.vue";
@@ -32,6 +32,16 @@ const handleSearch = (search) => {
     searchFilter.value = search;
 }
 
+const handleBorrowBook = (isbn) => {
+    const book = bookData.value.find((livre) => livre.ISBN === isbn); // Trouve le livre correspondant
+  if (book) {
+    console.log("Événement borrowBook capturé pour le livre :", book);
+  } else {
+    console.error("Livre avec l'ISBN spécifié introuvable :", isbn);
+  }
+};
+
+
 onMounted(() => {
     fetchBooks();
 });
@@ -61,7 +71,10 @@ onMounted(() => {
                     </div>
                 </div>
                 <div class="row">
-                    <DispoComponent :emprunt="livre.emprunt" />
+                    <DispoComponent 
+                    :emprunt="livre.emprunt" 
+                    :livre="livre.ISBN"
+                    @borrowBook="handleBorrowBook"/>
                 </div>
             </div>
         </div>

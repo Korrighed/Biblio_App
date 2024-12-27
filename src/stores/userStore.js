@@ -7,6 +7,7 @@ export const useUserStore = defineStore("userStore", {
   actions: {
     setUser(user) {
       this.currentUser = user; // Met à jour l'utilisateur connecté
+      console.log('Current user:', user )
     },
     clearUser() {
       this.currentUser = null; // Déconnecte l'utilisateur
