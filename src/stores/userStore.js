@@ -1,16 +1,16 @@
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
-export const useUserStore = defineStore("userStore", {
-  state: () => ({
-    currentUser: null, // Stocke l'utilisateur connecté
-  }),
-  actions: {
-    setUser(user) {
-      this.currentUser = user; // Met à jour l'utilisateur connecté
-      console.log('Current user:', user )
-    },
-    clearUser() {
-      this.currentUser = null; // Déconnecte l'utilisateur
-    },
-  },
+export const useUserStore = defineStore("userStore", () => {
+  const currentUser = ref(null);
+
+  const login = (user) => {
+    currentUser.value = user;
+  };
+
+  const clearUser = () => {
+    currentUser.value = null;
+  };
+
+  return { currentUser, login, clearUser };
 });

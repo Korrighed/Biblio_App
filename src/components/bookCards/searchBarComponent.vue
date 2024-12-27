@@ -1,27 +1,24 @@
 <template>
-<div class="container">
-    <div class="row">
-        <div class="col-md-4 align-self-start">
-            <form action="" class="search-form">
-                <div class="form-group has-feedback">
-                    <input type="text" @input="search" class="form-control" 
-                    name="search" id="search" placeholder="Rechercher un livre ou auteur">
-            	</div>
-            </form>
-        </div>
-    </div>
-</div>
-</template>
-
-<script setup>
-
-const emit = defineEmits(['search']);
-
-const search = (e) => {
-    const query = e.target.value.trim();
-    emit('search', query);
-};
-
-
-</script>
-
+    <form @submit.prevent>
+      <input
+        type="text"
+        placeholder="Rechercher un livre..."
+        v-model="searchTerm"
+        @input="onSearch"
+        class="form-control"
+      />
+    </form>
+  </template>
+  
+  <script setup>
+  import { ref } from "vue";
+  import { useBookStore } from "../../stores/bookStore";
+  
+  const searchTerm = ref("");
+  const bookStore = useBookStore();
+  
+  const onSearch = () => {
+    bookStore.updateSearchQuery(searchTerm.value);
+  };
+  </script>
+  

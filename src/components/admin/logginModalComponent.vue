@@ -108,13 +108,13 @@ const loginUser = async (username, password) => {
         }
 
         if (atob(user.password) === password) {
-            alert("Connexion réussie !");
-            userStore.setUser(user); 
-            emit('close');
-        } else {
-            alert("Mot de passe incorrect !");
-        }
-    };
+      alert("Connexion réussie !");
+      userStore.login(user); // Met à jour le store utilisateur
+      emit("close"); // Ferme la modal
+    } else {
+      alert("Mot de passe incorrect !");
+    }
+  };
 
     userRequest.onerror = (event) => {
         console.error("Erreur lors de la connexion :", event);

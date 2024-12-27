@@ -8,9 +8,11 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const app = createApp(App);
 const pinia = createPinia();
+
 app.use(pinia);
 app.mount('#app');
 
+// IndexedDB Initialization
 import { initDB, populateUsers } from "./database/indexedDB";
 (async () => {
   const db = await initDB();
