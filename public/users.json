@@ -1,0 +1,32 @@
+[
+    {
+      "id": "admin",
+      "login": "",
+      "password": "",
+      "role": "admin"
+    },
+    {
+      "id": "aboutin01",
+      "login": "",
+      "password": "",
+      "role": ""
+    },
+    {
+      "id": "aboutin02",
+      "login": "",
+      "password": "",
+      "role": ""
+    },
+    {
+      "id": "aboutin03",
+      "login": "",
+      "password": "",
+      "role": ""
+    },
+    {
+      "id": "aboutin04",
+      "login": "",
+      "password": "",
+      "role": ""
+    }
+]

@@ -1,31 +1,63 @@
 <template>
-  <div class="container">
-    <div class="col-12">
-      <label class="flex flex-nowrap mt-1">
-        <input type="radio" value="disponible" :checked="isDisponible" disabled />
-        <button v-if="isDisponible" type="button" class="btn btn-primary" value="disponible">
+   <div class="dispo-container">
+    <!-- Menu radio pour afficher l'état -->
+    <div class="radio-menu">
+      <div>
+        <label v-if="!showBorrowButton">
+          <input
+            type="radio"
+            :checked="!emprunt"
+            disabled
+          />
           Disponible
+        </label>
+        <!-- Bouton Emprunter -->
+        <button
+          v-else
+          @click="handleEmprunt"
+          class="btn btn-primary"
+        >
+          Emprunter
         </button>
-        <span v-else >Disponible</span>
-      </label>
-      <label class="flex flex-nowrap">
-        <input type="radio" value="emprunte" :checked="isEmprunte" disabled />
-        <span class="whitespace-nowrap">Empruntée</span>
-      </label>
+      </div>
+      <div>
+        <label>
+          <input
+            type="radio"
+            :checked="emprunt"
+            disabled
+          />
+          Indisponible
+        </label>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
+import { useBookStore } from "../../stores/bookStore";
+import { useUserStore } from "../../stores/userStore";
 
-const { emprunt } = defineProps({
-  emprunt: {
-    type: String,
-    required: true,
-  },
+defineProps({
+  isbn: { type: String, required: true },
+  emprunt: { type: Boolean, required: true },
 });
 
-const isDisponible = computed(() => emprunt !== "oui");
-const isEmprunte = computed(() => emprunt === "oui");
+const bookStore = useBookStore();
+const userStore = useUserStore();
+
+const currentUser = computed(() => userStore.currentUser);
+
+const showBorrowButton = computed(() => {
+  return currentUser.value && !emprunt; // Affiche "Emprunter" si un utilisateur est connecté et le livre est disponible
+});
+
+const handleEmprunt = () => {
+  if (!currentUser.value) {
+    console.warn("Aucun utilisateur connecté !");
+    return;
+  }
+  bookStore.toggleEmprunt(isbn); // Met à jour l'état dans le store
+};
 </script>
