@@ -2,27 +2,28 @@
     <div class="modal-overlay">
         <div class="container">
             <div class="row justify-content-center">
-                <button @click="$emit('close')" class="btn-close"></button>
                 <div class="row">
-                    <div class="card justify-content-between p-0 col-lg-2 col-sm-5" v-for="(livre, index) in filteredItems"
-                    :key="index">
-                    <div class="row g-0">
-                        <div class="col-4">
-                            <img :src="livre.image || 'default-cover.jpg'" 
-                            class="img-fluid rounded-start ms-1 mt-lg-4"
-                            alt="couverture">
-                        </div>
-                        <div class="col-8 p-0">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ livre.titre }}</h5>
-                                <p class="card-text">Auteur : {{ livre.auteur || "Auteur inconnu" }}</p>
-                                <p class="card-text">ISBN : {{ livre.ISBN }}</p>
-                                <p class="card-text">État : {{ livre.etat }}</p>
-                            </div>
-                        </div>
+                    <div class="card p-0 pb-1 col-12">
                         <div class="row">
-                            <CDatePicker label="Date" class="col-6 sm-col-12" v-model="startEmprunt" locale="fr-FR"/>
-                            <CDatePicker label="Date" class="col-6 sm-col-12" v-model="finEmprunt" locale="fr-FR"/>
+                            <button @click="$emit('close')" class="btn-close col-6"></button>
+                            <div class="col-4 my-auto">
+                                <img :src="selectedBook?.image || 'default-cover.jpg'"
+                                    class="img-fluid rounded-start ms-1 mt-lg-4" alt="couverture" />
+                            </div>
+                            <div class="col-8">
+                                <div class="card-body text-start">
+                                    <p class="card-title fs-1 fw-bold">{{ selectedBook?.titre }}</p>
+                                    <p class="card-text fs-4 fw-medium">
+                                        Auteur : {{ selectedBook?.auteur || "Auteur inconnu" }}
+                                    </p>
+                                    <p class="card-text fs-4">État : {{ selectedBook?.etat }}</p>
+                                    <p class="card-text fs-5">ISBN : {{ selectedBook?.ISBN }}</p>
+                                    
+                                </div>
+                                <button class="btn btn-primary col-md-5 col-sm-10" @click="confirmEmprunt">
+                                    Confirmer l'emprunt
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -32,6 +33,23 @@
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
+import { useBookStore } from "../../stores/bookStore";
+
+const bookStore = useBookStore();
+const bookISBN = ref("");
+const emit = defineEmits(["close", "confirm-emprunt"]);
+const props = defineProps({
+    isbn: { type: String, required: true },
+});
+
+const selectedBook = computed(() => {
+    return bookStore.bookData.find((livre) => livre.ISBN === props.isbn);
+});
+const confirmEmprunt = () => {
+    $emit("confirm-emprunt", props.isbn); // Émettre l'événement avec l'ISBN
+    $emit("close"); // Fermer la modale
+};
 </script>
 
 <style>
@@ -50,16 +68,10 @@
 
 .modal-content {
     background-color: #6f4e37 !important;
-    color: white !important;
-    padding: 20px;
+    color: #6f4e37 !important;
     border-radius: 8px !important;
     max-width: 50%;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
 }
 
-.btn-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
 </style>

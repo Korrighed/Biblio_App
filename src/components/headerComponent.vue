@@ -1,18 +1,18 @@
 <template>
     <div class="containermin-vh-25 py-0 header">
-        <div class="row">
-            <div class="col-6 align-content-center m-auto fs-5 text-center mt-3">
+        <div class="row mt-1">
+            <div class="col-8 col-md-8 fs-5 text-center">
                 Bienvenu sur l'intranet des amoureux du livre
             </div>
-            <div class="col-3">
+            <div class="col-4 col-md-4 text-center">
                 <button @click="currentUser ? $emit('navigateToAdmin') : $emit('showConnexion')" type="button"
-                    class="btn btn-secondary my-3">
+                    class="btn btn-secondary">
                     {{ currentUser ? currentUser.login : 'Connexion' }}
                 </button>
             </div>
         </div>
-        <div class="row mt-3">
-            <div class="col-6 m-2">
+        <div class="row mt-1">
+            <div class="col-md-6 col-sm-12 m-md-2 mx-sm-auto mb-2">
                 <form @submit.prevent>
                     <input type="text" placeholder="Rechercher un livre ou un auteur..." v-model="searchQuery"
                         @input="onSearch" class="form-control" />
@@ -37,7 +37,7 @@ const searchQuery = ref("");
 
 // Méthode pour mettre à jour la recherche
 const onSearch = () => {
-  bookStore.updateSearchQuery(searchQuery.value);
+    bookStore.updateSearchQuery(searchQuery.value);
 };
 
 // Déclaration des événements émis
