@@ -39,7 +39,7 @@ import { computed } from "vue";
 import { useBookStore } from "../../stores/bookStore";
 import { useUserStore } from "../../stores/userStore";
 
-defineProps({
+const props = defineProps({
   isbn: { type: String, required: true },
   emprunt: { type: Boolean, required: true },
 });
@@ -50,7 +50,7 @@ const userStore = useUserStore();
 const currentUser = computed(() => userStore.currentUser);
 
 const showBorrowButton = computed(() => {
-  return currentUser.value && !emprunt; // Affiche "Emprunter" si un utilisateur est connecté et le livre est disponible
+  return currentUser.value && !props.emprunt;
 });
 
 const handleEmprunt = () => {
@@ -58,6 +58,7 @@ const handleEmprunt = () => {
     console.warn("Aucun utilisateur connecté !");
     return;
   }
-  bookStore.toggleEmprunt(isbn); // Met à jour l'état dans le store
+  // Toggle the 'emprunt' state in the store
+  bookStore.toggleEmprunt(props.isbn);
 };
 </script>

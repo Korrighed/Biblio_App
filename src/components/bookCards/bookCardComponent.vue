@@ -23,8 +23,8 @@
           </div>
           <div class="row">
             <DispoComponent
-              :isbn="livre.ISBN"
-              :emprunt="livre.emprunt"
+            :isbn="livre.ISBN"
+            :emprunt="livre.emprunt" 
             />
           </div>
         </div>

@@ -17,8 +17,7 @@ export const useBookStore = defineStore("bookStore", () => {
 
   const filteredBooks = computed(() => {
     if (!searchQuery.value.trim()) return bookData.value;
-    return bookData.value.filter(
-      (livre) =>
+    return bookData.value.filter((livre) =>
         livre.titre.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         livre.auteur.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
