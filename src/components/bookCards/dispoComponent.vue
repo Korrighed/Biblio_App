@@ -34,7 +34,7 @@
     <emprunt-card-component
       v-if="showModalEmprunt"
       @close="showModalEmprunt = false"
-      @confirm-emprunt="bookStore.toggleEmprunt"
+      @confirm-emprunt="updateEmpruntStatus"
       :isbn="props.isbn"
     />
   </div>
@@ -48,13 +48,12 @@ import EmpruntCardComponent from '../admin/empruntCardComponent.vue';
 
 const bookStore = useBookStore();
 const userStore = useUserStore();
-
+const showModalEmprunt = ref(false);
 
 const props = defineProps({
   isbn: { type: String, required: true },
   emprunt: { type: Boolean, required: true },
 });
-
 
 const currentUser = computed(() => userStore.currentUser);
 
@@ -62,14 +61,14 @@ const showBorrowButton = computed(() => {
   return currentUser.value && !props.emprunt;
 });
 
-const showModalEmprunt = ref(false);
+
 const handleEmprunt = () => {
-  if (!currentUser.value) {
-    console.warn("Aucun utilisateur connecté !");
-    return;
-  }
   showModalEmprunt.value = true;
-  // Toggle the 'emprunt' state in the store
-  bookStore.toggleEmprunt(props.isbn);
 };
+
+// Met à jour l'état du livre dans le composant parent
+const updateEmpruntStatus = (isbn) => {
+  console.log(`Statut du livre avec ISBN ${isbn} mis à jour.`);
+};
+
 </script>

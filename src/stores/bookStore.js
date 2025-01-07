@@ -23,12 +23,12 @@ export const useBookStore = defineStore("bookStore", () => {
     );
   });
 
-  function toggleEmprunt(isbn) {
+  function updateBookStatus(isbn) {
     const book = bookData.value.find((livre) => livre.ISBN === isbn);
     if (book) {
-      book.emprunt = !book.emprunt;
+        book.emprunt = !book.emprunt; // Bascule entre emprunté et disponible
     }
-  }
+}
 
   function updateSearchQuery(query) {
     searchQuery.value = query;
@@ -39,7 +39,7 @@ export const useBookStore = defineStore("bookStore", () => {
     filteredBooks,
     searchQuery,
     fetchBooks,
-    toggleEmprunt,
+    updateBookStatus,
     updateSearchQuery,
   };
 });

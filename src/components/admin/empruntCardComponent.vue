@@ -5,7 +5,7 @@
                 <div class="row">
                     <div class="card p-0 pb-1 col-12">
                         <div class="row">
-                            <button @click="$emit('close')" class="btn-close col-6"></button>
+                            <button @click="closeModal" class="btn-close col-6"></button>
                             <div class="col-4 my-auto">
                                 <img :src="selectedBook?.image || 'default-cover.jpg'"
                                     class="img-fluid rounded-start ms-1 mt-lg-4" alt="couverture" />
@@ -20,9 +20,18 @@
                                     <p class="card-text fs-5">ISBN : {{ selectedBook?.ISBN }}</p>
                                     
                                 </div>
-                                <button class="btn btn-primary col-md-5 col-sm-10" @click="confirmEmprunt">
+                                <button
+                                    v-if="!selectedBook?.emprunt"
+                                    class="btn btn-primary col-md-5 col-sm-10"
+                                    @click="confirmEmprunt"
+                                >
                                     Confirmer l'emprunt
                                 </button>
+                                <button
+                                    v-else
+                                    class="btn btn-secondary col-md-5 col-sm-10"
+                                    @click="returnBook"
+                                > Rendre le livre</button>
                             </div>
                         </div>
                     </div>
@@ -46,10 +55,25 @@ const props = defineProps({
 const selectedBook = computed(() => {
     return bookStore.bookData.find((livre) => livre.ISBN === props.isbn);
 });
-const confirmEmprunt = () => {
-    $emit("confirm-emprunt", props.isbn); // Émettre l'événement avec l'ISBN
-    $emit("close"); // Fermer la modale
+
+const closeModal = () => {
+    emit("close"); // Fermer la modale
 };
+
+// Maj d'un emprunt dans le store
+const confirmEmprunt = () => {
+    bookStore.updateBookStatus(props.isbn); 
+    emit("confirm-emprunt", props.isbn); // Émettre l'événement avec l'ISBN
+    emit("close"); 
+};
+
+// Rendre un livre
+const returnBook = () => {
+    bookStore.toggleEmprunt(props.isbn); 
+    emit("confirm-emprunt", props.isbn); 
+    emit("close"); 
+};
+
 </script>
 
 <style>
