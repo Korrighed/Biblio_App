@@ -9,24 +9,24 @@
       "id": "aboutin01",
       "login": "",
       "password": "",
-      "role": ""
+      "role": "user"
     },
     {
       "id": "aboutin02",
       "login": "",
       "password": "",
-      "role": ""
+      "role": "user"
     },
     {
       "id": "aboutin03",
       "login": "",
       "password": "",
-      "role": ""
+      "role": "user"
     },
     {
       "id": "aboutin04",
       "login": "",
       "password": "",
-      "role": ""
+      "role": "user"
     }
 ]

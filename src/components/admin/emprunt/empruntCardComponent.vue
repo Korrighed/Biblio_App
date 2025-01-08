@@ -1,3 +1,33 @@
+<script setup>
+import { ref, computed } from "vue";
+import { useBookStore } from "../../../stores/bookStore";
+import { useUserStore } from '../../../stores/userStore';
+
+const bookStore = useBookStore();
+const userStore = useUserStore();
+const props = defineProps({ isbn: { type: String, required: true } });
+const emit = defineEmits(['close', 'confirm-emprunt']);
+
+const selectedBook = computed(() => {
+    return bookStore.bookData.find((livre) => livre.ISBN === props.isbn);
+});
+
+const closeModal = () => {emit("close");};
+
+// Maj d'un emprunt dans le store
+const confirmEmprunt = () => {
+    bookStore.updateBookStatus(props.isbn); 
+    emit("confirm-emprunt", props.isbn); 
+    emit("close"); 
+};
+
+// Rendre un livre
+const returnBook = () => {
+    bookStore.updateBookStatus(props.isbn);
+    emit('confirm-emprunt', props.isbn);
+    emit('close');
+};
+</script>
 <template>
     <div class="modal-overlay">
         <div class="container">
@@ -40,41 +70,6 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref, computed } from "vue";
-import { useBookStore } from "../../stores/bookStore";
-
-const bookStore = useBookStore();
-const bookISBN = ref("");
-const emit = defineEmits(["close", "confirm-emprunt"]);
-const props = defineProps({
-    isbn: { type: String, required: true },
-});
-
-const selectedBook = computed(() => {
-    return bookStore.bookData.find((livre) => livre.ISBN === props.isbn);
-});
-
-const closeModal = () => {
-    emit("close"); // Fermer la modale
-};
-
-// Maj d'un emprunt dans le store
-const confirmEmprunt = () => {
-    bookStore.updateBookStatus(props.isbn); 
-    emit("confirm-emprunt", props.isbn); // Émettre l'événement avec l'ISBN
-    emit("close"); 
-};
-
-// Rendre un livre
-const returnBook = () => {
-    bookStore.toggleEmprunt(props.isbn); 
-    emit("confirm-emprunt", props.isbn); 
-    emit("close"); 
-};
-
-</script>
 
 <style>
 .modal-overlay {

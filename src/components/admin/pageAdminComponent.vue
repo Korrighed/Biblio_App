@@ -11,15 +11,11 @@
       Déconnexion
       </button>
       </div>
-  
-      <h3 class="text-center-left">Gérez vos emprunts</h3>
-      <div class="container">
-        <div class="row">
-          <div class="col-12">
-            <!-- Liste des actions possibles, comme emprunter un livre -->
-            <button class="btn btn-primary" @click="borrowBook">Emprunter un livre</button>
-          </div>
-        </div>
+      <div v-if="currentUser.role === 'user'">
+        <UserBorrowedBooks />
+      </div>
+      <div v-else-if="currentUser.role === 'admin'">
+        <AdminBorrowedBooks />
       </div>
     </div>
   </div>
@@ -28,17 +24,10 @@
 <script setup>
 import { computed } from "vue";
 import { useUserStore } from "../../stores/userStore";
+import UserBorrowedBooks from "./emprunt/UserBorrowedBooks.vue";
+import AdminBorrowedBooks from "./emprunt/AdminBorrowedBooks.vue";
 
+console.log(currentUser.value);
 const userStore = useUserStore();
 const currentUser = computed(() => userStore.currentUser);
-
-// Fonction pour gérer l'emprunt
-const borrowBook = () => {
-  alert("Fonctionnalité d'emprunt en cours de développement !");
-};
-
 </script>
-
-<style>
-
-</style>

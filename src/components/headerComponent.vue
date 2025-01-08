@@ -23,13 +23,14 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useUserStore } from '../stores/userStore';
 import { useBookStore } from '../stores/bookStore';
 
 // Store utilisateur
 const userStore = useUserStore();
 const currentUser = computed(() => userStore.currentUser);
+console.log("Utilisteur connecté dans le store:", currentUser.value);
 
 // Store des livres
 const bookStore = useBookStore();
@@ -42,6 +43,12 @@ const onSearch = () => {
 
 // Déclaration des événements émis
 defineEmits(['showConnexion', 'navigateToAdmin']);
+
+watch(() => currentUser.value, (newVal, oldVal) => {
+    console.log("Changement de currentUser :", oldVal, "->", newVal);
+}
+);
+console.log("Instance du userStore :", userStore);
 </script>
 
 <style>

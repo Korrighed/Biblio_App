@@ -44,7 +44,7 @@
 import { computed, ref } from "vue";
 import { useBookStore } from "../../stores/bookStore";
 import { useUserStore } from "../../stores/userStore";
-import EmpruntCardComponent from '../admin/empruntCardComponent.vue';
+import EmpruntCardComponent from '../admin/emprunt/empruntCardComponent.vue';
 
 const bookStore = useBookStore();
 const userStore = useUserStore();

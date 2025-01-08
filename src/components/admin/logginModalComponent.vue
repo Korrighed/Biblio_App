@@ -29,132 +29,114 @@
                             </a>
                         </p>
                     </form>
+                    <p v-if="errorMessage" class="text-danger mt-2">{{ errorMessage }}</p>
+                    <p v-if="successMessage" class="text-success mt-2">{{ successMessage }}</p>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { initDB } from "../../database/indexedDB"; // Import IndexedDB configuration
-import { useUserStore } from "../../stores/userStore"; // Import Pinia store
+import { initDB } from "../../database/indexedDB";
+import { useUserStore } from "../../stores/userStore";
 
-const isLoginMode = ref(true); // Mode : Connexion ou Inscription
-const volunteerId = ref(""); // ID associatif
-const username = ref(""); // Nom d'utilisateur
-const password = ref(""); // Mot de passe
-const userStore = useUserStore(); // Pinia store
-const emit = defineEmits(['close']);
+// Emits
+const emit = defineEmits(["close"]);
 
+// States locaux
+const isLoginMode = ref(true);
+const volunteerId = ref("");
+const username = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
 
-// Basculer entre Connexion et Inscription
+// Store
+const userStore = useUserStore();
+
+// Basculer entre mode connexion / inscription
 const toggleMode = () => {
-    isLoginMode.value = !isLoginMode.value;
+  isLoginMode.value = !isLoginMode.value;
 };
 
+// Gérer la soumission du formulaire
+const handleSubmit = async () => {
+  errorMessage.value = "";
+  successMessage.value = "";
 
-// Fonction pour gérer l'inscription d'un utilisateur
-const registerUser = async (id, username, password) => {
-    const db = await initDB();
-    const transaction = db.transaction("users", "readwrite");
-    const store = transaction.objectStore("users");
+  if (!username.value || !password.value) {
+    errorMessage.value = "Tous les champs doivent être remplis.";
+    return;
+  }
 
-    console.log("ID fourni :", id); 
-    const userRequest = store.get(id);
+  // ========= MODE CONNEXION =========
+  if (isLoginMode.value) {
+    try {
+      // Appel direct au store
+      const message = await userStore.login(username.value, password.value);
+      successMessage.value = message;
+      // En cas de succès, on ferme la modale
+      emit("close");
+    } catch (error) {
+      console.error("Erreur lors de la connexion :", error);
+      errorMessage.value = error;
+    }
+  } 
+  // ========= MODE INSCRIPTION =========
+  else {
+    if (!volunteerId.value) {
+      errorMessage.value = "L'ID associatif est requis pour l'inscription.";
+      return;
+    }
 
-    userRequest.onsuccess = (event) => {
+    try {
+      // Traitement d'inscription dans le composant
+      // (Tu peux le déplacer dans le store si tu préfères)
+      const db = await initDB();
+      const transaction = db.transaction("users", "readwrite");
+      const store = transaction.objectStore("users");
+
+      const userRequest = store.get(volunteerId.value);
+
+      userRequest.onsuccess = (event) => {
         const user = event.target.result;
-        console.log("Utilisateur trouvé :", user);
 
         if (!user) {
-            alert("ID associatif non trouvé !");
-            return;
+          errorMessage.value = "ID associatif non trouvé !";
+          return;
         }
 
         if (user.login) {
-            alert("Cet ID est déjà utilisé !");
-            return;
+          errorMessage.value = "Cet ID est déjà utilisé !";
+          return;
         }
 
-        // Mise à jour des informations de l'utilisateur
-        user.login = username;
-        user.password = btoa(password); // Encodage du mot de passe
+        user.login = username.value;
+        user.password = btoa(password.value);
         store.put(user);
-        alert("Inscription réussie !");
-    };
 
-    userRequest.onerror = (event) => {
-        console.error("Erreur lors de l'inscription :", event);
-    };
-};
+        transaction.oncomplete = () => {
+          successMessage.value = "Inscription réussie !";
+        };
 
-// Fonction pour gérer la connexion d'un utilisateur
-const loginUser = async (username, password) => {
-    const db = await initDB();
-    const transaction = db.transaction("users", "readonly");
-    const store = transaction.objectStore("users");
+        transaction.onerror = (event) => {
+          errorMessage.value = "Erreur lors de l'inscription.";
+        };
+      };
 
-    const userRequest = store.getAll();
-
-    userRequest.onsuccess = (event) => {
-        const users = event.target.result;
-        const user = users.find((u) => u.login === username);
-
-        if (!user) {
-            alert("Nom d'utilisateur introuvable !");
-            return;
-        }
-
-        if (atob(user.password) === password) {
-      alert("Connexion réussie !");
-      userStore.login(user); // Met à jour le store utilisateur
-      emit("close"); // Ferme la modal
-    } else {
-      alert("Mot de passe incorrect !");
+      userRequest.onerror = (event) => {
+        errorMessage.value = "Erreur lors de la récupération de l'utilisateur.";
+      };
+    } catch (error) {
+      console.error("Erreur lors de l'inscription :", error);
+      errorMessage.value = "Une erreur est survenue pendant l'inscription.";
     }
-  };
-
-    userRequest.onerror = (event) => {
-        console.error("Erreur lors de la connexion :", event);
-    };
-};
-
-
-const errorMessage = ref(""); 
-const successMessage = ref("");
-// Gérer le formulaire de soumission
-const handleSubmit = async () => {
-    errorMessage.value = "";
-    successMessage.value = "";
-    if (!username.value || !password.value) {
-        errorMessage.value = "Tous les champs doivent être remplis.";
-        return;
-    }
-    if (isLoginMode.value) {
-        // Connexion
-        try {
-            await loginUser(username.value, password.value);
-            successMessage.value = "Connexion réussie";
-            } catch (error) {
-                errorMessage.value = error.message || "Erreur lors de la connexion.";
-            }
-    } else {
-        // Inscription
-        if (!volunteerId.value) {
-            errorMessage.value = "L'ID associatif est requis pour l'inscription.";
-            return;
-        }
-        try {
-            await registerUser(volunteerId.value, username.value, password.value);
-            successMessage.value = "Inscription réussie !";
-        } catch (error) {
-            errorMessage.value = error.message || "Erreur lors de l'inscription.";
-        }
-    }
+  }
 };
 </script>
+
 
 <style>
 .modal-overlay {
