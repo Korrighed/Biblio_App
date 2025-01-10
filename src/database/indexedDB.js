@@ -1,14 +1,19 @@
 export const initDB = () => {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open("UserDB", 1);
+        const request = indexedDB.open("UserDB", 2);
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
 
-            // Créer un Object Store pour les utilisateurs
             if (!db.objectStoreNames.contains("users")) {
                 const userStore = db.createObjectStore("users", { keyPath: "id" });
                 userStore.createIndex("role", "role", { unique: false });
+            }
+            if (!db.objectStoreNames.contains("borrows")) {
+                const borrowStore = db.createObjectStore("borrows", { keyPath: "id", autoIncrement: true });
+                borrowStore.createIndex("userId", "userId", { unique: false });
+                borrowStore.createIndex("ISBN", "ISBN", { unique: false });
+                borrowStore.createIndex("status", "status", { unique: false });
             }
         };
 

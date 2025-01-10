@@ -1,32 +1,51 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useBookStore } from "../../../stores/bookStore";
 import { useUserStore } from '../../../stores/userStore';
+import { useBorrowStore } from "../../../stores/borrowStore"; 
 
 const bookStore = useBookStore();
 const userStore = useUserStore();
+const borrowStore = useBorrowStore();
+
 const props = defineProps({ isbn: { type: String, required: true } });
 const emit = defineEmits(['close', 'confirm-emprunt']);
 
+const currentUser = computed(() => userStore.currentUser);
 const selectedBook = computed(() => {
     return bookStore.bookData.find((livre) => livre.ISBN === props.isbn);
 });
 
-const closeModal = () => {emit("close");};
+const isBookBorrowed = computed(() => {
+    return borrowStore.activeLoans.find(loan => loan.ISBN === props.isbn);
+});
 
 // Maj d'un emprunt dans le store
-const confirmEmprunt = () => {
-    bookStore.updateBookStatus(props.isbn); 
-    emit("confirm-emprunt", props.isbn); 
-    emit("close"); 
+const confirmEmprunt = async () => {
+    if (currentUser.value) {
+        await borrowStore.borrowBook(props.isbn); // Appelle la méthode Pinia pour enregistrer l'emprunt
+        emit("confirm-emprunt", props.isbn);
+        emit("close");
+    } else {
+        console.error("Utilisateur non connecté");
+    }
 };
 
-// Rendre un livre
-const returnBook = () => {
-    bookStore.updateBookStatus(props.isbn);
-    emit('confirm-emprunt', props.isbn);
-    emit('close');
+const returnBook = async () => {
+    if (currentUser.value) {
+        await borrowStore.returnBook(props.isbn); // Appelle la méthode Pinia pour marquer l'emprunt comme "retourné"
+        emit("confirm-emprunt", props.isbn);
+        emit("close");
+    } else {
+        console.error("Utilisateur non connecté");
+    }
 };
+
+
+const closeModal = () => {
+    emit("close");
+};
+
 </script>
 <template>
     <div class="modal-overlay">
@@ -48,20 +67,20 @@ const returnBook = () => {
                                     </p>
                                     <p class="card-text fs-4">État : {{ selectedBook?.etat }}</p>
                                     <p class="card-text fs-5">ISBN : {{ selectedBook?.ISBN }}</p>
-                                    
                                 </div>
                                 <button
-                                    v-if="!selectedBook?.emprunt"
+                                    v-if="!selectedBook?.status || selectedBook.status === 'returned'"
                                     class="btn btn-primary col-md-5 col-sm-10"
                                     @click="confirmEmprunt"
-                                >
+                                    >
                                     Confirmer l'emprunt
                                 </button>
                                 <button
-                                    v-else
-                                    class="btn btn-secondary col-md-5 col-sm-10"
-                                    @click="returnBook"
-                                > Rendre le livre</button>
+                                v-else
+                                class="btn btn-secondary col-md-5 col-sm-10"
+                                @click="returnBook"> 
+                                Rendre le livre
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -92,5 +111,4 @@ const returnBook = () => {
     max-width: 50%;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
 }
-
 </style>

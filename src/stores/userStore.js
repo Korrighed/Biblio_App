@@ -30,7 +30,6 @@ export const useUserStore = defineStore("userStore", () => {
                     return;
                 }
 
-                // Mise à jour du store utilisateur
                 currentUser.value = user;
                 console.log("Utilisateur connecté :", currentUser.value);
                 resolve("Connexion réussie !");
@@ -43,7 +42,6 @@ export const useUserStore = defineStore("userStore", () => {
         });
     };
 
-    // Fonction pour déconnecter un utilisateur
     const logout = () => {
         currentUser.value = null;
         console.log("Déconnexion réussie !");

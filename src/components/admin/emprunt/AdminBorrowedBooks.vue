@@ -1,18 +1,44 @@
 <script setup>
 import { computed } from "vue";
 import { useBookStore } from "../../../stores/bookStore";
+import { useBorrowStore } from "../../../stores/borrowStore";
+import { useUserStore } from "../../../stores/userStore";
 
 const bookStore = useBookStore();
+const borrowStore = useBorrowStore();
+const userStore = useUserStore();
 
-const borrowedBooks = computed(() => {
-  return bookStore.bookData.filter((book) => book.emprunt);
+onMounted(async () => {
+  await borrowStore.loadActiveLoans();
+  await bookStore.fetchBooks();
 });
 
-const borrowHistory = computed(() => bookStore.borrowHistory);
 
-const forceReturn = (isbn) => {
-  bookStore.updateBookStatus(isbn, null); // Rendre un livre sans utilisateur spécifique
+const allBorrows = computed(() => {
+  return borrowStore.activeLoans.map(loan => {
+    const book = bookStore.findBook(loan.ISBN);
+    return {
+      titre: book?.titre || 'Livre inconnu',
+      ISBN: loan.ISBN,
+      userId: loan.userId,
+      borrowDate: new Date(loan.borrowDate).toLocaleString(),
+      returnDate: loan.returnDate ? new Date(loan.returnDate).toLocaleString() : '-',
+      status: loan.status
+    };
+  });
+});;
+
+const formatDate = (date) => {
+  if (!date) return '-';
+  return new Date(date).toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 };
+
 </script>
 
 <template>
