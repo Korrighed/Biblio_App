@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useBookStore } from "../../../stores/bookStore";
 import { useBorrowStore } from "../../../stores/borrowStore";
 import { useUserStore } from "../../../stores/userStore";
@@ -15,22 +15,22 @@ onMounted(async () => {
 
 
 const allBorrows = computed(() => {
-  return borrowStore.activeLoans.map(loan => {
+  return borrowStore.allLoans.map(loan => {
     const book = bookStore.findBook(loan.ISBN);
     return {
       titre: book?.titre || 'Livre inconnu',
       ISBN: loan.ISBN,
       userId: loan.userId,
-      borrowDate: new Date(loan.borrowDate).toLocaleString(),
-      returnDate: loan.returnDate ? new Date(loan.returnDate).toLocaleString() : '-',
+      borrowDate: loan.returnDate,
+      returnDate: loan.returnDate ,
       status: loan.status
     };
   });
 });;
 
-const formatDate = (date) => {
-  if (!date) return '-';
-  return new Date(date).toLocaleString('fr-FR', {
+const formatDate = (dateString) => {
+  if (!dateString) return '-';
+  return new Date(dateString).toLocaleString('fr-FR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -42,54 +42,84 @@ const formatDate = (date) => {
 </script>
 
 <template>
-    <div>
-      <h3>Liste des livres empruntés</h3>
-      <table class="table">
-        <thead>
+  <div class="admin-borrows">
+    <h3 class="mb-4">Gestion des Emprunts</h3>
+    
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
           <tr>
             <th>Titre</th>
-            <th>Auteur</th>
-            <th>Emprunté par</th>
-            <th>Action</th>
+            <th>ISBN</th>
+            <th>ID Utilisateur</th>
+            <th>Date d'emprunt</th>
+            <th>Date de retour</th>
+            <th>Statut</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="book in borrowedBooks" :key="book.ISBN">
-            <td>{{ book.titre }}</td>
-            <td>{{ book.auteur }}</td>
-            <td>{{ book.borrowedBy }}</td>
+          <tr v-for="borrow in allBorrows" :key="`${borrow.ISBN}-${borrow.userId}-${borrow.borrowDate}`">
+            <td>{{ borrow.titre }}</td>
+            <td><span class="badge bg-secondary">{{ borrow.ISBN }}</span></td>
+            <td><span class="badge bg-primary">{{ borrow.userId }}</span></td>
+            <td>{{ formatDate(borrow.borrowDate) }}</td>
+            <td>{{ formatDate(borrow.returnDate) }}</td>
             <td>
-              <button class="btn btn-secondary" @click="forceReturn(book.ISBN)">
-                Rendre
-              </button>
+              <span 
+                class="badge"
+                :class="{
+                  'bg-success': borrow.status === 'returned',
+                  'bg-warning': borrow.status === 'borrowed'
+                }"
+              >
+                {{ borrow.status === 'borrowed' ? 'En cours' : 'Retourné' }}
+              </span>
             </td>
           </tr>
         </tbody>
       </table>
-      <h3>Historique des emprunts</h3>
-      <ul>
-        <li v-for="entry in borrowHistory" :key="entry.date">
-          <strong>{{ entry.bookISBN }}</strong> - {{ entry.action }} par {{ entry.userId }} le
-          {{ new Date(entry.date).toLocaleString() }}
-        </li>
-      </ul>
     </div>
-  </template>
-  
-  <style>
+
+    <div v-if="allBorrows.length === 0" class="alert alert-info mt-3">
+      Aucun emprunt enregistré pour le moment.
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.admin-borrows {
+  padding: 20px;
+}
+.table-responsive {
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 .table {
-  width: 100%;
-  border-collapse: collapse;
+  margin-bottom: 0;
 }
-
-.table th,
-.table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
 .table th {
-  background-color: #f2f2f2;
-  text-align: left;
+  white-space: nowrap;
+}
+.table td {
+  vertical-align: middle;
+}
+.badge {
+  font-size: 0.9em;
+  padding: 6px 10px;
+}
+.bg-secondary {
+  background-color: #6c757d;
+}
+.bg-primary {
+  background-color: #0d6efd;
+}
+.bg-success {
+  background-color: #198754;
+}
+.bg-warning {
+  background-color: #ffc107;
+  color: #000;
 }
 </style>

@@ -1,6 +1,6 @@
 export const initDB = () => {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open("UserDB", 2);
+        const request = indexedDB.open("UserDB", 3);
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
@@ -14,6 +14,15 @@ export const initDB = () => {
                 borrowStore.createIndex("userId", "userId", { unique: false });
                 borrowStore.createIndex("ISBN", "ISBN", { unique: false });
                 borrowStore.createIndex("status", "status", { unique: false });
+                borrowStore.createIndex("returnDate", "returnDate", { unique: false });
+            } else {
+                const borrowStore = event.currentTarget.transaction.objectStore("borrows");
+                if (!borrowStore.indexNames.contains("borrowDate")) {
+                    borrowStore.createIndex("borrowDate", "borrowDate", { unique: false });
+                }
+                if (!borrowStore.indexNames.contains("returnDate")) {
+                    borrowStore.createIndex("returnDate", "returnDate", { unique: false });
+                }
             }
         };
 

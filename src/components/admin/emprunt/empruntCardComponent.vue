@@ -16,9 +16,6 @@ const selectedBook = computed(() => {
     return bookStore.bookData.find((livre) => livre.ISBN === props.isbn);
 });
 
-const isBookBorrowed = computed(() => {
-    return borrowStore.activeLoans.find(loan => loan.ISBN === props.isbn);
-});
 
 // Maj d'un emprunt dans le store
 const confirmEmprunt = async () => {
@@ -31,15 +28,7 @@ const confirmEmprunt = async () => {
     }
 };
 
-const returnBook = async () => {
-    if (currentUser.value) {
-        await borrowStore.returnBook(props.isbn); // Appelle la méthode Pinia pour marquer l'emprunt comme "retourné"
-        emit("confirm-emprunt", props.isbn);
-        emit("close");
-    } else {
-        console.error("Utilisateur non connecté");
-    }
-};
+
 
 
 const closeModal = () => {
@@ -74,12 +63,6 @@ const closeModal = () => {
                                     @click="confirmEmprunt"
                                     >
                                     Confirmer l'emprunt
-                                </button>
-                                <button
-                                v-else
-                                class="btn btn-secondary col-md-5 col-sm-10"
-                                @click="returnBook"> 
-                                Rendre le livre
                                 </button>
                             </div>
                         </div>

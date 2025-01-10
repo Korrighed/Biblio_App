@@ -27,7 +27,7 @@ import { useUserStore } from "../../stores/userStore";
 import UserBorrowedBooks from "./emprunt/UserBorrowedBooks.vue";
 import AdminBorrowedBooks from "./emprunt/AdminBorrowedBooks.vue";
 
-
+const emit = defineEmits(['close']);
 const userStore = useUserStore();
 const currentUser = computed(() => userStore.currentUser);
 
