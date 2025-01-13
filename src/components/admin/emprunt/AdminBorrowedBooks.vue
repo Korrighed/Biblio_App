@@ -21,7 +21,7 @@ const allBorrows = computed(() => {
       titre: book?.titre || 'Livre inconnu',
       ISBN: loan.ISBN,
       userId: loan.userId,
-      borrowDate: loan.returnDate,
+      borrowDate: loan.borrowDate,
       returnDate: loan.returnDate ,
       status: loan.status
     };

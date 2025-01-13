@@ -8,7 +8,7 @@ import { useBookStore } from "../../../stores/bookStore";
 const userStore = useUserStore();
 const borrowStore = useBorrowStore();
 const bookStore = useBookStore();
-const selectedISBN = ref(null);
+const processingISBN  = ref(null);
 
 const userBorrows = computed(() => {
     return borrowStore.activeLoans.filter(loan =>
@@ -25,26 +25,38 @@ const userBorrows = computed(() => {
 
 const handleBookReturn = async (isbn) => {
     try {
+        processingISBN.value = isbn; // Pour suivre l'opération en cours
         await borrowStore.returnBook(isbn);
         await borrowStore.loadActiveLoans();
     } catch (error) {
         console.error("Erreur lors du retour du livre:", error);
+        // Ajouter une notification d'erreur à l'utilisateur
+    } finally {
+        processingISBN.value = null;
     }
 };
 
 
 </script>
 <template>
-    <div>
-        <h3>Mes livres empruntés</h3>
-        <ul>
-            <li v-for="borrow in userBorrows" :key="borrow.ISBN" class="col-6 border border-bottom-1">
+    <div class="row mx-auto">
+        <h3 class="m-sm-auto">Mes livres empruntés</h3>
+        <div v-if="borrowStore.isLoading" class="text-center">
+            Chargement...
+        </div>
+        <ul v-else>
+            <li v-for="borrow in userBorrows" 
+                :key="borrow.ISBN" 
+                class="col-12 border border-bottom-1">
                 <div class="book-info">
                     <span class="title">{{ borrow.title }}</span>
                     <span class="author">par {{ borrow.author }}</span>
                 </div>
-                <button class="btn btn-danger" @click="handleBookReturn(borrow.ISBN)">
-                    Rendre
+                <button 
+                    class="btn btn-danger" 
+                    @click="handleBookReturn(borrow.ISBN)"
+                    :disabled="processingISBN === borrow.ISBN || borrowStore.isLoading">
+                    {{ processingISBN === borrow.ISBN ? 'En cours...' : 'Rendre' }}
                 </button>
             </li>
         </ul>

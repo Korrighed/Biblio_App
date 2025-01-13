@@ -8,36 +8,14 @@ export const useBorrowStore = defineStore("borrowStore", () => {
     const borrowHistory = ref([]);
     const activeLoansData = ref([]);
     const allLoansData = ref([]); // Nouvelle référence pour tous les emprunts
-    const bookStore = useBookStore();
     const userStore = useUserStore();
+    const isLoading = ref(false);
 
-    const activeLoans = computed(() => activeLoansData.value);
+    const activeLoans = computed(() => 
+        activeLoansData.value.filter(loan => loan.status === "borrowed")
+    );
 
-    function logBorrowHistory(isbn, userId, action) {
-        const historyEntry = {
-            isbn,
-            userId,
-            action,
-            timestamp: new Date().toISOString()
-        };
-        borrowHistory.value.push(historyEntry);
-    }
-
-    async function loadActiveLoans() {
-        const db = await initDB();
-        const transaction = db.transaction("borrows", "readonly");
-        const store = transaction.objectStore("borrows");
-        
-        return new Promise((resolve) => {
-            store.getAll().onsuccess = (event) => {
-                // Stocker tous les emprunts
-                allLoansData.value = event.target.result;
-                // Filtrer les emprunts actifs
-                activeLoansData.value = event.target.result.filter(b => b.status === "borrowed");
-                resolve();
-            };
-        });
-    }
+    const allLoans = computed(() => allLoansData.value);
 
     async function borrowBook(isbn) {
         const db = await initDB();
@@ -59,38 +37,97 @@ export const useBorrowStore = defineStore("borrowStore", () => {
         await loadActiveLoans();
     }
 
-    async function returnBook(isbn) {
-        const db = await initDB();
-        const transaction = db.transaction("borrows", "readwrite");
-        const store = transaction.objectStore("borrows");
-
-        const index = store.index("ISBN");
-        await new Promise((resolve) => {
-            index.get(isbn).onsuccess = async (event) => {
-                const borrow = event.target.result;
-                if (borrow) {
-                    borrow.status = "returned";
-                    borrow.returnDate = new Date().toISOString(); // Stockage en ISO string
-                    store.put(borrow).onsuccess = resolve;
-                } else {
-                    resolve();
-                }
-            };
-        });
-        
-        logBorrowHistory(isbn, userStore.currentUser.id, "returned");
-        await loadActiveLoans();
+    function logBorrowHistory(isbn, userId, action) {
+        const historyEntry = {
+            isbn,
+            userId,
+            action,
+            timestamp: new Date().toISOString()
+        };
+        borrowHistory.value.push(historyEntry);
     }
 
-    // Ajout d'un getter pour tous les emprunts
-    const allLoans = computed(() => allLoansData.value);
+    async function loadActiveLoans() {
+        if (isLoading.value) return; // Évite les appels multiples
+        isLoading.value = true;
+
+        try {
+            const db = await initDB();
+            const transaction = db.transaction("borrows", "readonly");
+            const store = transaction.objectStore("borrows");
+
+            return new Promise((resolve, reject) => {
+                const request = store.getAll();
+
+                request.onsuccess = (event) => {
+                    const allLoans = event.target.result;
+                    allLoansData.value = allLoans;
+                    activeLoansData.value = allLoans;
+                    resolve();
+                };
+
+                request.onerror = (event) => {
+                    console.error("Erreur chargement emprunts:", event);
+                    reject(event);
+                };
+            });
+        } finally {
+            isLoading.value = false;
+        }
+    }   
+
+    async function returnBook(isbn) {
+        if (isLoading.value) return;
+        isLoading.value = true;
+
+        try {
+            const db = await initDB();
+            const transaction = db.transaction("borrows", "readwrite");
+            const store = transaction.objectStore("borrows");
+            const index = store.index("ISBN");
+
+            return new Promise((resolve, reject) => {
+                const request = index.getAll(isbn);
+
+                request.onsuccess = async (event) => {
+                    const borrows = event.target.result;
+                    // Trouve le dernier emprunt actif pour cet ISBN
+                    const activeBorrow = borrows
+                        .filter(b => b.userId === userStore.currentUser?.id)
+                        .find(b => b.status === "borrowed");
+
+                    if (!activeBorrow) {
+                        reject(new Error(`Aucun emprunt actif trouvé pour l'ISBN: ${isbn}`));
+                        return;
+                    }
+
+                    activeBorrow.status = "returned";
+                    activeBorrow.returnDate = new Date().toISOString();
+
+                    const updateRequest = store.put(activeBorrow);
+
+                    updateRequest.onsuccess = () => {
+                        logBorrowHistory(isbn, userStore.currentUser?.id, "returned");
+                        resolve();
+                    };
+
+                    updateRequest.onerror = (error) => reject(error);
+                };
+
+                request.onerror = (error) => reject(error);
+            });
+        } finally {
+            isLoading.value = false;
+        }
+    }
 
     return {
         borrowHistory,
         borrowBook,
         returnBook,
         activeLoans,
-        allLoans, // Export du nouveau getter
-        loadActiveLoans
+        allLoans,
+        loadActiveLoans,
+        isLoading
     };
 });

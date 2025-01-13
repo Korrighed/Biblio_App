@@ -68,7 +68,7 @@ export const populateUsers = async (db) => {
             };
         }
 
-        transaction.oncomplete = () => {
+        transaction.oncomplete = () => { console.log('Transaction terminée avec succès');
         };
     } catch (error) {
         console.error("Erreur lors du chargement des utilisateurs :", error);

@@ -1,22 +1,22 @@
 <template>
-<div class="page-admin">
-  <div class="row mt-2">
-    <div class="row justify-content-left my-sm-2">
-      <p class="text-center-left col-2 fs-3">Bienvenue, {{ currentUser.login }}</p>
+  <div class="page-admin">
+    <div class="row justify-content-evenly mt-1 mx-1">
+      <p class="col-8 col-sm-6 fs-3 mb-0">
+        Bienvenue, {{ currentUser.login }}
+      </p>
       <button 
           @click="logout" 
           type="button" 
-          class="btn btn-secondary col-2 my-3"
+          class="btn btn-secondary col-1 col-md-3"
         >
       Déconnexion
       </button>
-      </div>
-      <div v-if="currentUser.role === 'user'">
-        <UserBorrowedBooks />
-      </div>
-      <div v-else-if="currentUser.role === 'admin'">
-        <AdminBorrowedBooks />
-      </div>
+    </div>
+    <div v-if="currentUser.role === 'user'">
+      <UserBorrowedBooks />
+    </div>
+    <div v-else-if="currentUser.role === 'admin'">
+      <AdminBorrowedBooks />
     </div>
   </div>
 </template>

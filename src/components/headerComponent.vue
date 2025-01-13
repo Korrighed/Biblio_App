@@ -1,6 +1,6 @@
 <template>
     <div class="containermin-vh-25 py-0 header">
-        <div class="row mt-1">
+        <div class="row mt-1 justify-content-start">
             <div class="col-8 col-md-8 fs-5 text-center">
                 Bienvenu sur l'intranet des amoureux du livre
             </div>
@@ -11,8 +11,8 @@
                 </button>
             </div>
         </div>
-        <div class="row mt-1">
-            <div class="col-md-6 col-sm-12 m-md-2 mx-sm-auto mb-2">
+        <div class="row my-1 justify-content-center justify-content-md-start">
+            <div class="col-11 col-md-4 ">
                 <form @submit.prevent>
                     <input type="text" placeholder="Rechercher un livre ou un auteur..." v-model="searchQuery"
                         @input="onSearch" class="form-control" />

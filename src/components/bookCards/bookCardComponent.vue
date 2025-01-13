@@ -34,7 +34,6 @@
   
   <script setup>
   import DispoComponent from "./dispoComponent.vue";
-  import { defineProps } from "vue";
   
   const { books } = defineProps({
     books: {
