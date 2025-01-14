@@ -11,24 +11,22 @@ export const useBookStore = defineStore("bookStore", () => {
       const response = await axios.get("./livres.json");
       bookData.value = response.data.livres;
     } catch (error) {
-      console.error("Erreur lors de la récupération des livres :", error);
+      console.error("Erreur chargement livres:", error);
     }
   }
 
+  // 2. Bar de recheche et filtrage
   const filteredBooks = computed(() => {
     if (!searchQuery.value.trim()) return bookData.value;
-    return bookData.value.filter(
-      (livre) =>
-        livre.titre.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        livre.auteur.toLowerCase().includes(searchQuery.value.toLowerCase())
+    return bookData.value.filter((livre) =>
+      livre.titre.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      livre.auteur.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
   });
 
-  function toggleEmprunt(isbn) {
-    const book = bookData.value.find((livre) => livre.ISBN === isbn);
-    if (book) {
-      book.emprunt = !book.emprunt;
-    }
+  // 3. Trouver un livre par son ISBN
+  function findBook(isbn) {
+    return bookData.value.find((livre) => livre.ISBN === isbn);
   }
 
   function updateSearchQuery(query) {
@@ -37,10 +35,10 @@ export const useBookStore = defineStore("bookStore", () => {
 
   return {
     bookData,
-    filteredBooks,
     searchQuery,
     fetchBooks,
-    toggleEmprunt,
-    updateSearchQuery,
-  };
+    filteredBooks,
+    findBook,
+    updateSearchQuery
+};
 });

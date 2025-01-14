@@ -1,18 +1,32 @@
 export const initDB = () => {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open("UserDB", 1);
+        const request = indexedDB.open("UserDB", 3);
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
 
-            // Créer un Object Store pour les utilisateurs
             if (!db.objectStoreNames.contains("users")) {
-                db.createObjectStore("users", { keyPath: "id" }); 
+                const userStore = db.createObjectStore("users", { keyPath: "id" });
+                userStore.createIndex("role", "role", { unique: false });
+            }
+            if (!db.objectStoreNames.contains("borrows")) {
+                const borrowStore = db.createObjectStore("borrows", { keyPath: "id", autoIncrement: true });
+                borrowStore.createIndex("userId", "userId", { unique: false });
+                borrowStore.createIndex("ISBN", "ISBN", { unique: false });
+                borrowStore.createIndex("status", "status", { unique: false });
+                borrowStore.createIndex("returnDate", "returnDate", { unique: false });
+            } else {
+                const borrowStore = event.currentTarget.transaction.objectStore("borrows");
+                if (!borrowStore.indexNames.contains("borrowDate")) {
+                    borrowStore.createIndex("borrowDate", "borrowDate", { unique: false });
+                }
+                if (!borrowStore.indexNames.contains("returnDate")) {
+                    borrowStore.createIndex("returnDate", "returnDate", { unique: false });
+                }
             }
         };
 
         request.onsuccess = (event) => {
-            // console.log("Base de données IndexedDB ouverte avec succès !");
             resolve(event.target.result);
         };
 
@@ -24,61 +38,43 @@ export const initDB = () => {
 };
 
 export const populateUsers = async (db) => {
-    // console.log("Chargement des utilisateurs depuis users.json...");
-
     try {
-        // Étape 1 : Charger les utilisateurs depuis users.json
         const response = await fetch("/users.json");
         const usersFromJSON = await response.json();
 
-        // Étape 2 : Récupérer les utilisateurs existants dans IndexedDB
-        const transaction = db.transaction("users", "readonly");
+        const transaction = db.transaction("users", "readwrite");
         const store = transaction.objectStore("users");
 
-        const request = store.getAll();
-        request.onsuccess = async (event) => {
-            const existingUsers = event.target.result;
+        for (const user of usersFromJSON) {
+            const request = store.get(user.id);
 
-            // Créer un ensemble des IDs existants dans IndexedDB
-            const existingIds = new Set(existingUsers.map((user) => user.id));
-            // Étape 3 : Ajouter les utilisateurs manquants
-            const newUsers = usersFromJSON.filter((user) => !existingIds.has(user.id));
-            // console.log("Nouveaux utilisateurs à ajouter :", newUsers);
+            request.onsuccess = (event) => {
+                const existingUser = event.target.result;
 
-            if (newUsers.length > 0) {
-                const writeTransaction = db.transaction("users", "readwrite");
-                const writeStore = writeTransaction.objectStore("users");
-
-                for (const user of newUsers) {
-                    const addRequest = writeStore.add(user);
-                    addRequest.onsuccess = () => {
-                        // console.log("Utilisateur ajouté :", user);
-                    };
-
-                    addRequest.onerror = (event) => {
-                        console.error("Erreur lors de l'ajout de l'utilisateur :", user, event.target.error);
-                    };
+                if (existingUser) {
+                    // Met à jour uniquement les champs manquants
+                    existingUser.login = existingUser.login || user.login;
+                    existingUser.password = existingUser.password || user.password;
+                    existingUser.role = existingUser.role || user.role;
+                    store.put(existingUser);
+                } else {
+                    // Ajoute un nouvel utilisateur si inexistant
+                    store.add(user);
                 }
+            };
 
-                writeTransaction.oncomplete = () => {
-                    // console.log("Tous les nouveaux utilisateurs ont été ajoutés avec succès !");
-                };
+            request.onerror = (event) => {
+                console.error("Erreur lors de la récupération de l'utilisateur :", event);
+            };
+        }
 
-                writeTransaction.onerror = (event) => {
-                    console.error("Erreur dans la transaction d'ajout :", event.target.error);
-                };
-            } else {
-                // console.log("Aucun utilisateur à ajouter. Tous les IDs sont déjà présents.");
-            }
-        };
-
-        request.onerror = (event) => {
-            console.error("Erreur lors de la récupération des utilisateurs existants :", event.target.error);
+        transaction.oncomplete = () => { console.log('Transaction terminée avec succès');
         };
     } catch (error) {
-        console.error("Erreur lors du chargement de users.json :", error);
+        console.error("Erreur lors du chargement des utilisateurs :", error);
     }
 };
+
 
 const addUserToIndexedDB = (db, user) => {
     return new Promise((resolve, reject) => {
@@ -105,7 +101,6 @@ export const getAllUsers = async () => {
     const request = store.getAll();
 
     request.onsuccess = (event) => {
-        console.log("Utilisateurs dans IndexedDB :", event.target.result);
     };
     request.onerror = (event) => {
         console.error("Erreur lors de la récupération des utilisateurs :", event);
@@ -114,5 +109,5 @@ export const getAllUsers = async () => {
 
 (async () => {
     const db = await initDB();
-    // await getAllUsers();
+    await getAllUsers();
 })();

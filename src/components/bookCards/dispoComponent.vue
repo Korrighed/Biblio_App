@@ -1,63 +1,104 @@
 <template>
-   <div class="dispo-container">
-    <!-- Menu radio pour afficher l'état -->
+  <div class="dispo-container">
     <div class="radio-menu">
       <div>
         <label v-if="!showBorrowButton">
-          <input
-            type="radio"
-            :checked="!emprunt"
-            disabled
-          />
+          <input type="radio" :checked="!isBookBorrowed" disabled />
           Disponible
         </label>
-        <!-- Bouton Emprunter -->
         <button
-          v-else
+          v-if="showBorrowButton"
           @click="handleEmprunt"
           class="btn btn-primary"
+          :disabled="isLoading"
         >
           Emprunter
         </button>
       </div>
       <div>
         <label>
-          <input
-            type="radio"
-            :checked="emprunt"
-            disabled
-          />
+          <input type="radio" :checked="isBookBorrowed" disabled />
           Indisponible
         </label>
       </div>
     </div>
+    <emprunt-card-component
+      v-if="showModalEmprunt"
+      @close="closeModal"
+      :isbn="props.isbn"
+    />
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { useBookStore } from "../../stores/bookStore";
 import { useUserStore } from "../../stores/userStore";
-
-defineProps({
-  isbn: { type: String, required: true },
-  emprunt: { type: Boolean, required: true },
-});
+import { useBorrowStore } from "../../stores/borrowStore";
+import EmpruntCardComponent from "../admin/emprunt/empruntCardComponent.vue";
 
 const bookStore = useBookStore();
 const userStore = useUserStore();
+const borrowStore = useBorrowStore();
+const showModalEmprunt = ref(false);
+const isLoading = ref(true);
+
+const props = defineProps({
+  isbn: { type: String, required: true },
+});
+
+// Chargement initial des emprunts
+onMounted(async () => {
+  await borrowStore.loadActiveLoans();
+  isLoading.value = false;
+});
+
+const isBookBorrowed = computed(() => {
+  return borrowStore.activeLoans.some(
+    (loan) => loan.ISBN === props.isbn && loan.status === "borrowed"
+  );
+});
 
 const currentUser = computed(() => userStore.currentUser);
 
 const showBorrowButton = computed(() => {
-  return currentUser.value && !emprunt; // Affiche "Emprunter" si un utilisateur est connecté et le livre est disponible
+  return currentUser.value && !isBookBorrowed.value && !isLoading.value;
 });
 
-const handleEmprunt = () => {
-  if (!currentUser.value) {
-    console.warn("Aucun utilisateur connecté !");
-    return;
+const handleEmprunt = async () => {
+  showModalEmprunt.value = true;
+};
+
+
+const closeModal = async (confirmed) => {
+  if (confirmed && !isBookBorrowed.value) {
+    isLoading.value = true;
+    try {
+      await borrowStore.borrowBook(props.isbn);
+      await borrowStore.loadActiveLoans();
+    } catch (error) {
+      console.error("Erreur lors de l'emprunt:", error);
+    } finally {
+      isLoading.value = false;
+    }
   }
-  bookStore.toggleEmprunt(isbn); // Met à jour l'état dans le store
+  showModalEmprunt.value = false;
 };
 </script>
+
+<style scoped>
+.dispo-container {
+  padding: 1rem;
+}
+
+.radio-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+</style>
