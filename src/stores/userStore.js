@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { initDB } from "../database/indexedDB";
 
 export const useUserStore = defineStore("userStore", () => {
-    const currentUser = ref(null); // Utilisateur actuel
+    const currentUser = ref(null);
 
     // Fonction pour connecter un utilisateur
     const login = async (username, password) => {

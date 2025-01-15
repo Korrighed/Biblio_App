@@ -1,6 +1,6 @@
 export const initDB = () => {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open("UserDB", 3);
+        const request = indexedDB.open("UserDB", 4);
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
@@ -8,6 +8,8 @@ export const initDB = () => {
             if (!db.objectStoreNames.contains("users")) {
                 const userStore = db.createObjectStore("users", { keyPath: "id" });
                 userStore.createIndex("role", "role", { unique: false });
+                userStore.createIndex("resetCode", "resetCode", { unique: false });
+                userStore.createIndex("resetCodeExpiration", "resetCodeExpiration", { unique: false });
             }
             if (!db.objectStoreNames.contains("borrows")) {
                 const borrowStore = db.createObjectStore("borrows", { keyPath: "id", autoIncrement: true });

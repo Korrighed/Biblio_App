@@ -19,14 +19,32 @@
                 </form>
             </div>
         </div>
+        <div class="containermin-vh-25 py-0 header">
+        <!-- Code existant -->
+        <div v-if="currentUser?.role === 'admin' && hasActiveReset" 
+            class="row mt-2 justify-content-center">
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    Une demande de réinitialisation de mot de passe est en cours.
+                    <button @click="$emit('navigateToAdmin')" 
+                            class="btn btn-sm btn-warning ms-2">
+                        Voir les détails
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
 </template>
 
 <script setup>
 import { computed, ref, watch } from "vue";
+import { usePasswordStore } from '../stores/passwordStore'
 import { useUserStore } from '../stores/userStore';
 import { useBookStore } from '../stores/bookStore';
 
+const passwordStore = usePasswordStore();
+const hasActiveReset = computed(() => passwordStore.resetInProgress);
 // Store utilisateur
 const userStore = useUserStore();
 const currentUser = computed(() => userStore.currentUser);

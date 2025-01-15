@@ -1,51 +1,64 @@
 <template>
-    <div class="modal-overlay">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="modal-content col-lg-4 col-sm-5 mx-auto">
-                    <button @click="$emit('close')" class="btn-close"></button>
-                    <h3 class="text-center">{{ isLoginMode ? "Connexion" : "Inscription" }}</h3>
-
-                    <form @submit.prevent="handleSubmit" class="w-100">
-                        <div v-if="!isLoginMode" class="mb-2 col-12">
-                            Identifiant associatif :
-                            <input v-model="volunteerId" type="text" class="form-control" required />
-                        </div>
-                        <div class="mb-2 col-12">
-                            Nom d'utilisateur :
-                            <input v-model="username" type="text" class="form-control" required />
-                        </div>
-                        <div class="mb-2 col-12">
-                            Mot de passe :
-                            <input v-model="password" type="password" class="form-control" required />
-                        </div>
-                        <button type="submit" class="btn btn-primary col-3 mt-2 mx-auto d-block">
-                            {{ isLoginMode ? "Connexion" : "S'inscrire" }}
-                        </button>
-                        <p class="text-center mt-3">
-                            {{ isLoginMode ? "Pas encore de compte ?" : "Déjà inscrit ?" }}
-                            <a href="#" @click.prevent="toggleMode">
-                                {{ isLoginMode ? "Créer un compte" : "Se connecter" }}
-                            </a>
-                        </p>
-                    </form>
-                    <p v-if="errorMessage" class="text-danger mt-2">{{ errorMessage }}</p>
-                    <p v-if="successMessage" class="text-success mt-2">{{ successMessage }}</p>
-                </div>
+  <div class="modal-overlay">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="modal-content col-lg-4 col-sm-5 mx-auto">
+          <button @click="$emit('close')" class="btn-close"></button>
+          <h3 class="text-center">
+            {{ isLoginMode ? "Connexion" : "Inscription" }}
+          </h3>
+          <form @submit.prevent="handleSubmit" class="w-100">
+            <div v-if="!isLoginMode" class="mb-2 col-12">
+              Identifiant associatif :
+              <input v-model="volunteerId" type="text" class="form-control" required />
             </div>
+            <div class="mb-2 col-12">
+              Nom d'utilisateur :
+              <input v-model="username" type="text" class="form-control" required />
+            </div>
+            <div class="mb-2 col-12">
+              Mot de passe :
+              <input v-model="password" type="password" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary col-3 mt-2 mx-auto d-block">
+              {{ isLoginMode ? "Connexion" : "S'inscrire" }}
+            </button>
+            <p class="text-center mt-3">
+              {{ isLoginMode ? "Pas encore de compte ?" : "Déjà inscrit ?" }}
+              <a href="#" @click.prevent="toggleMode">
+                {{ isLoginMode ? "Créer un compte" : "Se connecter" }}
+              </a>
+            </p>
+          </form>
+          <p v-if="errorMessage" class="text-danger mt-2">{{ errorMessage }}</p>
+          <p v-if="successMessage" class="text-success mt-2">
+            {{ successMessage }}
+          </p>
+          <div v-if="isLoginMode">
+            <p class="text-center mt-2">
+              <a href="#" @click.prevent="showResetPassword = true">
+                Mot de passe oublié ?
+              </a>
+            </p>
+            <ResetPasswordComponent v-if="showResetPassword" @close="showResetPassword = false" />
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { initDB } from "../../database/indexedDB";
 import { useUserStore } from "../../stores/userStore";
+import ResetPasswordComponent from './password/resetpasswordComponent.vue'
 
 // Emits
 const emit = defineEmits(["close"]);
 
 // States locaux
+const showResetPassword = ref(false);
 const isLoginMode = ref(true);
 const volunteerId = ref("");
 const username = ref("");
@@ -83,7 +96,7 @@ const handleSubmit = async () => {
       console.error("Erreur lors de la connexion :", error);
       errorMessage.value = error;
     }
-  } 
+  }
   // ========= MODE INSCRIPTION =========
   else {
     if (!volunteerId.value) {
@@ -137,33 +150,32 @@ const handleSubmit = async () => {
 };
 </script>
 
-
 <style>
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
-    background-color: #6f4e37 !important;
-    color: white !important;
-    padding: 20px;
-    border-radius: 8px !important;
-    max-width: 50%;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+  background-color: #6f4e37 !important;
+  color: white !important;
+  padding: 20px;
+  border-radius: 8px !important;
+  max-width: 50%;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
 }
 
 .btn-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 </style>
