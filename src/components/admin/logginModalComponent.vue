@@ -56,7 +56,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { initDB } from "../../database/indexedDB";
+import { initDB } from "../../../public/indexedDB";
 import { useUserStore } from "../../stores/userStore";
 import ResetPasswordComponent from './password/resetpasswordComponent.vue'
 

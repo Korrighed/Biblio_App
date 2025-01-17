@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useBookStore } from "./bookStore";
 import { useUserStore } from "./userStore";
-import { initDB } from "../database/indexedDB";
+import { initDB } from "../../public/indexedDB";
 
 export const useBorrowStore = defineStore("borrowStore", () => {
     const borrowHistory = ref([]);

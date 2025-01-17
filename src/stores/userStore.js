@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { initDB } from "../database/indexedDB";
+import { initDB } from "../../public/indexedDB";
 
 export const useUserStore = defineStore("userStore", () => {
     const currentUser = ref(null);

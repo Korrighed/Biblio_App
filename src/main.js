@@ -13,7 +13,7 @@ app.use(pinia);
 app.mount('#app');
 
 // IndexedDB Initialization
-import { initDB, populateUsers } from "./database/indexedDB";
+import { initDB, populateUsers } from "../public/indexedDB";
 (async () => {
   const db = await initDB();
   await populateUsers(db);
