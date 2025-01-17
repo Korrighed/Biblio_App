@@ -45,7 +45,7 @@ const closeModal = () => {
                         <div class="row">
                             <button @click="closeModal" class="btn-close col-6"></button>
                             <div class="col-4 my-auto">
-                                <img :src="selectedBook?.image || 'default-cover.jpg'"
+                                <img :src="selectedBook?.image || '../../public/default-cover.jpg'"
                                     class="img-fluid rounded-start ms-1 mt-lg-4" alt="couverture" />
                             </div>
                             <div class="col-8">

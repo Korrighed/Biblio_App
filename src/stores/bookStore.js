@@ -8,7 +8,7 @@ export const useBookStore = defineStore("bookStore", () => {
 
   async function fetchBooks() {
     try {
-      const response = await axios.get("./livres.json");
+      const response = await axios.get("../../public/livres.json");
       bookData.value = response.data.livres;
     } catch (error) {
       console.error("Erreur chargement livres:", error);

@@ -41,39 +41,51 @@ export const initDB = () => {
 
 export const populateUsers = async (db) => {
     try {
-        const response = await fetch("/users.json");
+        // Déterminer le bon chemin selon l'environnement
+        const basePath = import.meta.env.MODE === 'production' 
+            ? '/Biblio_App/users.json'  // Chemin pour GitHub Pages
+            : '/users.json';            // Chemin pour le développement local
+
+        const response = await fetch(basePath);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const usersFromJSON = await response.json();
 
         const transaction = db.transaction("users", "readwrite");
         const store = transaction.objectStore("users");
 
-        for (const user of usersFromJSON) {
-            const request = store.get(user.id);
+        // Utiliser Promise.all pour gérer toutes les opérations de façon asynchrone
+        const operations = usersFromJSON.map(user => {
+            return new Promise((resolve, reject) => {
+                const request = store.get(user.id);
 
-            request.onsuccess = (event) => {
-                const existingUser = event.target.result;
+                request.onsuccess = (event) => {
+                    const existingUser = event.target.result;
+                    if (existingUser) {
+                        existingUser.login = existingUser.login || user.login;
+                        existingUser.password = existingUser.password || user.password;
+                        existingUser.role = existingUser.role || user.role;
+                        store.put(existingUser);
+                    } else {
+                        store.add(user);
+                    }
+                    resolve();
+                };
 
-                if (existingUser) {
-                    // Met à jour uniquement les champs manquants
-                    existingUser.login = existingUser.login || user.login;
-                    existingUser.password = existingUser.password || user.password;
-                    existingUser.role = existingUser.role || user.role;
-                    store.put(existingUser);
-                } else {
-                    // Ajoute un nouvel utilisateur si inexistant
-                    store.add(user);
-                }
-            };
+                request.onerror = (event) => {
+                    console.error("Erreur lors de la récupération de l'utilisateur :", event);
+                    reject(event);
+                };
+            });
+        });
 
-            request.onerror = (event) => {
-                console.error("Erreur lors de la récupération de l'utilisateur :", event);
-            };
-        }
+        await Promise.all(operations);
+        console.log('Tous les utilisateurs ont été traités avec succès');
 
-        transaction.oncomplete = () => { console.log('Transaction terminée avec succès');
-        };
     } catch (error) {
         console.error("Erreur lors du chargement des utilisateurs :", error);
+        throw error; // Propager l'erreur pour la gestion en amont
     }
 };
 

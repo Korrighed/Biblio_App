@@ -8,7 +8,7 @@
         <div class="row g-0">
           <div class="col-4">
             <img
-              :src="livre.image || 'default-cover.jpg'"
+              :src="livre.image || '../../public/default-cover.jpg'"
               class="img-fluid rounded-start ms-1 mt-lg-4"
               alt="couverture"
             />
