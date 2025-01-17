@@ -16,6 +16,7 @@
     <component
       :is="currentPageComponent"
       @logout="logout"
+      @navigateToPage="navigateToPage"
       v-bind="currentPageProps"
     />
   </div>
@@ -48,7 +49,7 @@ const navigateToPage = (page) => {
 
 // Déconnexion
 const logout = () => {
-  userStore.clearUser();
+  userStore.logout();
   navigateToPage('books');
 };
 

@@ -1,9 +1,10 @@
 // src/components/admin/password/resetpasswordComponent.vue
 <template>
-    <div class="reset-password-container">
+    <div class="reset-password-container row">
         <h4 class="text-center mb-4">Réinitialisation du mot de passe</h4>
         <form @submit.prevent="handleSubmit" class="w-100">
-            <div class="mb-3">
+
+            <div class="mb-2">
                 <label class="form-label">Identifiant associatif :</label>
                 <input
                     v-model="userId"
@@ -14,14 +15,12 @@
                 />
             </div>
 
-            <!-- Message d'attente si demande effectuée mais code pas encore actif -->
             <div v-if="step === 2 && !hasActiveCode" class="alert alert-warning">
                 Contactez un administrateur pour recevoir votre code de réinitialisation
             </div>
 
-            <!-- Formulaire de réinitialisation si code actif -->
             <template v-if="step === 2 && hasActiveCode">
-                <div class="mb-3">
+                <div class="mb-2">
                     <label class="form-label">Code de réinitialisation :</label>
                     <input
                         v-model="resetCode"
@@ -33,7 +32,7 @@
                     />
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-2">
                     <label class="form-label">Nouveau mot de passe :</label>
                     <input
                         v-model="newPassword"
@@ -53,12 +52,8 @@
             </button>
         </form>
 
-        <div v-if="error" class="alert alert-danger mt-3">
-            {{ error }}
-        </div>
-        <div v-if="success" class="alert alert-success mt-3">
-            {{ success }}
-        </div>
+        <div v-if="error" class="alert alert-danger mt-3"> {{ error }}</div>
+        <div v-if="success" class="alert alert-success mt-3"> {{ success }}</div>
     </div>
 </template>
 

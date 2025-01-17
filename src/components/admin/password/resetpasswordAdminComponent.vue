@@ -1,16 +1,19 @@
 <template>
-    <div class="reset-password-admin p-3 row">
-        <h4 class="mb-4">Réinitialisations en cours</h4>
-        <div v-if="hasActiveReset" class="active-reset-container">
-            <div class="alert alert-info col-5">
-                <h5>Demande active</h5>
-                <p>ID Utilisateur : {{ currentResetUserId }}</p>
-                <p>Code : <strong>{{ currentResetCode  }}</strong></p>
-                <p>Temps restant : {{ formattedTimeRemaining }}</p>
+    <div class ="container">
+        <div class="row align-items-start">
+            <div v-if="hasActiveReset" class="col-12 col-md-8">
+                <div class="alert alert-info">
+                    <h5>Demande active</h5>
+                    <p>ID Utilisateur : {{ currentResetUserId }}</p>
+                    <p>Code : <strong>{{ currentResetCode  }}</strong></p>
+                    <p>Temps restant : {{ formattedTimeRemaining }}</p>
+                </div>
             </div>
-        </div>
-        <div v-else class="text-center alert alert-info col-5 justify-content-start">
-            Aucune réinitialisation de mot de passe en cours
+            <div v-else class="col-12 col-md-6 d-flex text-center mx-md-auto">
+                <div class="alert alert-info text-start">
+                    Aucune réinitialisation de mot de passe en cours
+                </div>
+            </div>
         </div>
     </div>
 </template>

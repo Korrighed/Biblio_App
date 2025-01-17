@@ -1,46 +1,3 @@
-<script setup>
-import { computed, onMounted } from "vue";
-import { useBookStore } from "../../../stores/bookStore";
-import { useBorrowStore } from "../../../stores/borrowStore";
-import { useUserStore } from "../../../stores/userStore";
-
-const bookStore = useBookStore();
-const borrowStore = useBorrowStore();
-const userStore = useUserStore();
-
-onMounted(async () => {
-  await borrowStore.loadActiveLoans();
-  await bookStore.fetchBooks();
-});
-
-
-const allBorrows = computed(() => {
-  return borrowStore.allLoans.map(loan => {
-    const book = bookStore.findBook(loan.ISBN);
-    return {
-      titre: book?.titre || 'Livre inconnu',
-      ISBN: loan.ISBN,
-      userId: loan.userId,
-      borrowDate: loan.borrowDate,
-      returnDate: loan.returnDate ,
-      status: loan.status
-    };
-  });
-});;
-
-const formatDate = (dateString) => {
-  if (!dateString) return '-';
-  return new Date(dateString).toLocaleString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
-
-</script>
-
 <template>
   <div class="admin-borrows">
     <h3 class="mb-4">Gestion des Emprunts</h3>
@@ -86,6 +43,49 @@ const formatDate = (dateString) => {
   </div>
 </template>
 
+<script setup>
+import { computed, onMounted } from "vue";
+import { useBookStore } from "../../../stores/bookStore";
+import { useBorrowStore } from "../../../stores/borrowStore";
+import { useUserStore } from "../../../stores/userStore";
+
+const bookStore = useBookStore();
+const borrowStore = useBorrowStore();
+const userStore = useUserStore();
+
+onMounted(async () => {
+  await borrowStore.loadActiveLoans();
+  await bookStore.fetchBooks();
+});
+
+
+const allBorrows = computed(() => {
+  return borrowStore.allLoans.map(loan => {
+    const book = bookStore.findBook(loan.ISBN);
+    return {
+      titre: book?.titre || 'Livre inconnu',
+      ISBN: loan.ISBN,
+      userId: loan.userId,
+      borrowDate: loan.borrowDate,
+      returnDate: loan.returnDate ,
+      status: loan.status
+    };
+  });
+});;
+
+const formatDate = (dateString) => {
+  if (!dateString) return '-';
+  return new Date(dateString).toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+</script>
+
 <style scoped>
 .admin-borrows {
   padding: 20px;
@@ -93,7 +93,6 @@ const formatDate = (dateString) => {
 .table-responsive {
   margin-top: 20px;
   border-radius: 8px;
-  overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 .table {

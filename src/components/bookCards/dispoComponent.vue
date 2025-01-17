@@ -1,7 +1,7 @@
 <template>
-  <div class="dispo-container">
-    <div class="radio-menu">
-      <div>
+  <div class="container m-0">
+    <div class="radio-menu row">
+      <div class="col">
         <label v-if="!showBorrowButton">
           <input type="radio" :checked="!isBookBorrowed" disabled />
           Disponible
@@ -15,8 +15,8 @@
           Emprunter
         </button>
       </div>
-      <div>
-        <label>
+      <div class="col">
+        <label >
           <input type="radio" :checked="isBookBorrowed" disabled />
           Indisponible
         </label>
@@ -87,16 +87,6 @@ const closeModal = async (confirmed) => {
 </script>
 
 <style scoped>
-.dispo-container {
-  padding: 1rem;
-}
-
-.radio-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
 .btn:disabled {
   cursor: not-allowed;
   opacity: 0.6;

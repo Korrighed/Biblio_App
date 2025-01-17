@@ -1,5 +1,5 @@
 <template>
-    <div class="row">
+    <div class="row m-1 align-item-center">
       <div
         class="card justify-content-between p-0 col-lg-2 col-sm-5"
         v-for="(livre, index) in books"
@@ -13,11 +13,11 @@
               alt="couverture"
             />
           </div>
-          <div class="col-8 p-0">
+          <div class="col-8 p-0 m-0">
             <div class="card-body">
               <h5 class="card-title">{{ livre.titre }}</h5>
               <p class="card-text">Auteur : {{ livre.auteur || "Auteur inconnu" }}</p>
-              <p class="card-text">ISBN : {{ livre.ISBN }}</p>
+              <p class="card-text fs-6">ISBN : {{ livre.ISBN }}</p>
               <p class="card-text">État : {{ livre.etat }}</p>
             </div>
           </div>
